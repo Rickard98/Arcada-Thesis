@@ -11,21 +11,19 @@ source("Script/Functions/Funktions_for_selection.R")
 ##
 
 Relevant_topics <- c(
-  "ECON_", "MILI_", "PLO_", "CRISISLEX_", "EPU_","TAX_ECON_PRICE",
-  "WB_1920","WB_1234","WB_696","WB_845","WB_1921","GENERAL_GOVERNMENT",
+  "ECON-STOCKMARKET","TAX_ECON_PRICE", "WB_1920","WB_1234",
+  "WB_696","WB_1921","GENERAL_GOVERNMENT",
   "WB_439","WB_471","WB_1098","WB_444","WB_1235","EPU_POLICY_GOVERNMENT",
-  "WB_318","WB_1096","WB_450","WB_1104","ELECTION","MILITARY","WB_336","WB_713",
-  "WB_775", "WB_2575", "WB_328", "WB_336", "WB_1973","WB_2530_BUSINESS_ENVIRONMENT",
-  "WB_405", "WB_1045", "WB_1045"
+  "WB_318","WB_1096","WB_1104","ELECTION","WB_336","WB_713",
+  "WB_775", "WB_2575", "WB_1045", "WB_1045"
 )
 
 Relevant_topics <- Relevant_topics[Relevant_topics != ""]
 
-Sovereings  <- c("germany","france", "italy","spain")
+Sovereings  <- c("germany","france")
 
 
-### Get the data 
-GDELT <- read.csv("Economic data/GDELT scraping/20251028.gkg.csv", sep = ",", header = TRUE)
+### Get the data Agreggated
 files <- list.files("Economic data/GDELT scraping/", full.names = TRUE)
 All_data <- data.frame()
 
@@ -41,3 +39,26 @@ for (Sovereing in Sovereings) {
 }
 
 write_xlsx(All_data, "Results/initial_news_sentiment_test.xlsx")
+
+##########################################
+### Get the on a postion levle
+#############################################
+
+files <- list.files("Economic data/GDELT scraping/", full.names = TRUE)
+GDELT_last60_files <- tail(files, 120)
+
+All_positions <- data.frame()
+
+for (path in GDELT_last60_files) {
+  
+  GDELT <- read.csv(path)
+  
+  ### Second for looå
+  for (Sovereing in Sovereings) {
+    data <- Function_for_selection_publications_not_aggre(GDELT,Topic_pattern, Sovereing)
+    All_positions <- rbind(All_positions, data)
+  }
+  
+}
+
+write_xlsx(All_positions, "Results/All_publications.xlsx")

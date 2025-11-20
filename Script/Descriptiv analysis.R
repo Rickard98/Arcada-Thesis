@@ -28,9 +28,6 @@ wide_df <- subset(wide_df, as.Date(Date) >= as.Date("2013-01-01") & as.Date(Date
 
 ggplot(wide_df, aes(x = Date)) +
   geom_line(aes(y = Germany, color = "Germany"), size = 1) +
-  geom_line(aes(y = France, color = "France"), size = 1) +
-  geom_line(aes(y = Italy, color = "Italy"), size = 1) +
-  geom_line(aes(y = Spain, color = "Spain"), size = 1) +
   labs(title = "CDS Spreads",
        x = "Date",
        y = "Value",
