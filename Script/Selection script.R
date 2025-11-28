@@ -38,7 +38,7 @@ for (Sovereing in Sovereings) {
 
 }
 
-write_xlsx(All_data, "Results/initial_news_sentiment_test.xlsx")
+write_xlsx(All_data, "Results/initial_news_sentiment_test2.xlsx")
 
 ##########################################
 ### Get the on a postion levle

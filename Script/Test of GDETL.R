@@ -3,6 +3,13 @@ library(dplyr)
 GDELT_smal_org <- read.csv("Economic data/GDELT/20251025.gkg.csv", sep = "\t", header = TRUE)
 GDELT_big <- read.csv("Economic data/GDELT/20251025.gkgcounts.csv", sep = "\t", header = TRUE)
 GDELT <- read.csv("Economic data/GDELT/20251103.export.CSV", sep = "\t", header = TRUE)
+GDELT <- read.csv("Economic data/GDELT/20251122084500.export.CSV", sep = "\t", header = TRUE)
+GDELT <- read.csv("Economic data/GDELT/20251121100000.gkg.csv", sep = "\t", header = TRUE)
+colnames(GDELT) <- paste0("column", seq_along(GDELT))
+
+
+GDELT_econ <- GDELT[grep("9.297", GDELT$column16), ]
+
 
 
 GDELT_smal <- read.csv("Economic data/GDELT scraping/20251025.gkg.csv", sep = ",", header = TRUE)

@@ -1,0 +1,7 @@
+
+Försök hitta korrelation mellan CDS spreads smat ditt nythets index:
+- Bygg en pipleline för ett land i gången. 
+- Granska koderna nogrannare, vilka som skulle kunna korrekera med CDS spreads t.ex. WB_... 
+- se någgrannare på de olika tonsen (hur stor diff är det mellan de olika tonesena i data, dvs är snitt skit.
+- Få bort alla skit artiklar  
+- Börja med stora länder t.ex. tyskland eller USA

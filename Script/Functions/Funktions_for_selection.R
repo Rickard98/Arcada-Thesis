@@ -26,7 +26,11 @@ Monetry_policy <- c("WB_444_MONETARY_POLICY", "WB_1235_CENTRAL_BANKS", "ECON_CEN
 finacial <- c("WB_1920_FINANCIAL_SECTOR_DEVELOPMENT","WB_1234_BANKING_INSTITUTIONS","WB_318_FINANCIAL_ARCHITECTURE_AND_BANKING",
               "WB_336_NON_BANK_FINANCIAL_INSTITUTIONS", "WB_1045_TREASURY")
 
-Dummys <- c("Economic_general", "Political", "Economic_policy", "finacial", "DEBT", "Monetry_policy")
+Economic_general <- c(Economic_general, DEBT,finacial)
+Economic_policy <- c(Monetry_policy, Political,Economic_policy)
+
+Dummys <- c("Economic_general", "Economic_policy")
+#Dummys <- c("Economic_general", "Political", "Economic_policy", "finacial", "DEBT", "Monetry_policy")
 
 #########################
 ## Soruces 
@@ -96,8 +100,6 @@ Function_for_selection_publications_not_aggre <- function(df,Topic_pattern, Sove
       country_mentions = str_count(tolower(LOCATIONS), paste(tolower(Sovereing), collapse = "|"))
     )
   
-  df <- df %>%
-    distinct(CAMEOEVENTIDS, .keep_all = TRUE)
   
   df <- subset(df, country_mentions > 2)
   
@@ -126,10 +128,10 @@ Function_for_selection_publications_not_aggre <- function(df,Topic_pattern, Sove
     1, 0
   )
   
-  df$Political <- ifelse(
-    grepl(paste(Political, collapse = "|"), df$THEMES),
-    1, 0
-  )
+  # df$Political <- ifelse(
+  #   grepl(paste(Political, collapse = "|"), df$THEMES),
+  #   1, 0
+  # )
   
   # df$Military_cryssis <- ifelse(
   #   grepl(paste(Military_cryssis, collapse = "|"), df$THEMES),
@@ -141,13 +143,13 @@ Function_for_selection_publications_not_aggre <- function(df,Topic_pattern, Sove
     1, 0
   )
   
-  df$finacial <- ifelse(
-    grepl(paste(finacial, collapse = "|"), df$THEMES),
-    1, 0
-  )
+  # df$finacial <- ifelse(
+  #   grepl(paste(finacial, collapse = "|"), df$THEMES),
+  #   1, 0
+  # )
   
   df$relevant <- df$relevant_count/df$num_themes
-  df <- subset(df,relevant >0)
+  df <- subset(df,relevant > 0)
   
   
     
@@ -169,11 +171,21 @@ Function_for_selection_publications_not_aggre <- function(df,Topic_pattern, Sove
 
 ### 
 
-
-###
+#df <- GDELT
+###########################################
 ## Selection scripts
+#############################################
 
 Function_for_selection_publications <- function(df,Topic_pattern, Sovereing){
+  
+  # Filter by credible sources depending on Sovereing country
+  if (tolower(Sovereing) == "germany") {
+    df <- subset(df, SOURCES %in% credible_german_sources)
+  } else if (tolower(Sovereing) == "france") {
+    df <- subset(df, SOURCES %in% credible_french_sources)
+  }
+  
+  
   
   first_date <- GDELT$DATE[1]
   # Filter rows by the given Sovereing country name(s)
@@ -185,10 +197,15 @@ Function_for_selection_publications <- function(df,Topic_pattern, Sovereing){
       country_mentions = str_count(tolower(LOCATIONS), paste(tolower(Sovereing), collapse = "|"))
     )
   
-  df <- df %>%
-    distinct(CAMEOEVENTIDS, .keep_all = TRUE)
-  
+  # df <- df %>%
+  #   distinct(CAMEOEVENTIDS, .keep_all = TRUE)
+  # 
   df <- subset(df, country_mentions > 2)
+  
+  # If no rows after filtering → return an empty tibble with correct structure
+  if (nrow(df) == 0) {
+    return(data.frame())
+  }
   
   df <- select(df,LOCATIONS, THEMES, TONE, SOURCEURLS)
   
@@ -217,10 +234,10 @@ Function_for_selection_publications <- function(df,Topic_pattern, Sovereing){
     1, 0
   )
   
-  df$Political <- ifelse(
-    grepl(paste(Political, collapse = "|"), df$THEMES),
-    1, 0
-  )
+  # df$Political <- ifelse(
+  #   grepl(paste(Political, collapse = "|"), df$THEMES),
+  #   1, 0
+  # )
   
   # df$Military_cryssis <- ifelse(
   #   grepl(paste(Military_cryssis, collapse = "|"), df$THEMES),
@@ -232,14 +249,18 @@ Function_for_selection_publications <- function(df,Topic_pattern, Sovereing){
     1, 0
   )
   
-  df$finacial <- ifelse(
-    grepl(paste(finacial, collapse = "|"), df$THEMES),
-    1, 0
-  )
+  # df$finacial <- ifelse(
+  #   grepl(paste(finacial, collapse = "|"), df$THEMES),
+  #   1, 0
+  # )
   
   df$relevant <- df$relevant_count/df$num_themes
-  df <- subset(df,relevant >= 0.10)
+  df <- subset(df,relevant > 0)
   
+  # If no rows after filtering → return an empty tibble with correct structure
+  if (nrow(df) == 0) {
+    return(data.frame())
+  }
   
   if (nrow(df) > 0) {
     
@@ -299,12 +320,29 @@ Function_for_selection_publications <- function(df,Topic_pattern, Sovereing){
   
   mean_tones_all_wide <- mean_tones_all %>%
     pivot_wider(
-      id_cols = c(date, Sovereing),   # columns that define each unique observation
-      names_from = Category,          # category becomes part of column names
-      values_from = starts_with("tone_"), # all tone columns are values
-      names_glue = "{.value}_{Category}"  # creates names like tone_1_Economic_general
+      id_cols = c(date, Sovereing),   
+      names_from = Category,          
+      values_from = starts_with("tone_"), # 
+      names_glue = "{.value}_{Category}"  # 
     )
   ###return the data
+  
+  required_cols <- c(
+    "tone_1_Economic_general", "tone_1_Economic_policy",
+    "tone_2_Economic_general", "tone_2_Economic_policy",
+    "tone_3_Economic_general", "tone_3_Economic_policy",
+    "tone_4_Economic_general", "tone_4_Economic_policy",
+    "tone_5_Economic_general", "tone_5_Economic_policy",
+    "tone_6_Economic_general", "tone_6_Economic_policy"
+  )
+  
+  # Add missing columns
+  for (col in required_cols) {
+    if (!(col %in% names(mean_tones_all_wide))) {
+      mean_tones_all_wide[[col]] <- NA
+    }
+  }
+  mean_tones_all_wide <- mean_tones_all_wide[, c("date", "Sovereing", required_cols)]
   
   return(mean_tones_all_wide)
 }
