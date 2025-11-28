@@ -3,6 +3,7 @@ library(stringr)
 library(tidyr)
 library(writexl)
 
+GDELT_raw <- read.csv("Economic data/GDELT scraping/20251028.gkg.csv", sep = ",", header = TRUE)
 
 GDELT <- read.csv("Economic data/GDELT scraping/20251028.gkg.csv", sep = ",", header = TRUE)
 GDELT_test <- select(GDELT,LOCATIONS, THEMES, TONE, SOURCEURLS)

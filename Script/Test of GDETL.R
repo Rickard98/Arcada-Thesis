@@ -4,6 +4,7 @@ GDELT_smal_org <- read.csv("Economic data/GDELT/20251025.gkg.csv", sep = "\t", h
 GDELT_big <- read.csv("Economic data/GDELT/20251025.gkgcounts.csv", sep = "\t", header = TRUE)
 GDELT <- read.csv("Economic data/GDELT/20251103.export.CSV", sep = "\t", header = TRUE)
 GDELT <- read.csv("Economic data/GDELT/20251122084500.export.CSV", sep = "\t", header = TRUE)
+
 GDELT <- read.csv("Economic data/GDELT/20251121100000.gkg.csv", sep = "\t", header = TRUE)
 colnames(GDELT) <- paste0("column", seq_along(GDELT))
 
